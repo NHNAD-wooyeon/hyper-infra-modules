@@ -4,3 +4,4 @@
 |--------|-------------|----------------|
 | [terraform-aws-ecr](../terraform-aws-ecr/) | AWS Elastic Container Registry | v1.0.0 |
 | [terraform-aws-lambda](../terraform-aws-lambda/) | AWS Lambda Functions | v1.0.0 |
+| [terraform-aws-sqs](../terraform-aws-sqs/) | AWS Simple Queue Service | v1.0.0 |
