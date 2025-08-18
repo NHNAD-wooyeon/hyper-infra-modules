@@ -13,21 +13,15 @@ resource "aws_sqs_queue" "this" {
   kms_data_key_reuse_period_seconds = var.kms_data_key_reuse_period_seconds
   sqs_managed_sse_enabled           = var.sqs_managed_sse_enabled
 
-  dynamic "redrive_policy" {
-    for_each = var.redrive_policy != null ? [var.redrive_policy] : []
-    content {
-      dead_letter_target_arn = redrive_policy.value.dead_letter_target_arn
-      max_receive_count      = redrive_policy.value.max_receive_count
-    }
-  }
+  redrive_policy = var.redrive_policy != null ? jsonencode({
+    deadLetterTargetArn = var.redrive_policy.dead_letter_target_arn
+    maxReceiveCount     = var.redrive_policy.max_receive_count
+  }) : null
 
-  dynamic "redrive_allow_policy" {
-    for_each = var.redrive_allow_policy != null ? [var.redrive_allow_policy] : []
-    content {
-      redrivePermission = redrive_allow_policy.value.redrivePermission
-      sourceQueueArns   = redrive_allow_policy.value.sourceQueueArns
-    }
-  }
+  redrive_allow_policy = var.redrive_allow_policy != null ? jsonencode({
+    redrivePermission = var.redrive_allow_policy.redrivePermission
+    sourceQueueArns   = var.redrive_allow_policy.sourceQueueArns
+  }) : null
 
   tags = var.tags
 }
