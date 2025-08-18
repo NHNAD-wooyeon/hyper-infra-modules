@@ -1,9 +1,9 @@
 resource "aws_lambda_function" "this" {
   function_name                  = var.function_name
   role                          = var.role_arn != null ? var.role_arn : aws_iam_role.lambda_role[0].arn
-  handler                       = var.handler
+  handler                       = var.package_type == "Zip" ? var.handler : null
   source_code_hash             = var.source_code_hash
-  runtime                      = var.runtime
+  runtime                      = var.package_type == "Zip" ? var.runtime : null
   timeout                      = var.timeout
   memory_size                  = var.memory_size
   reserved_concurrent_executions = var.reserved_concurrent_executions
