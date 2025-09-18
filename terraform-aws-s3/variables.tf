@@ -130,11 +130,6 @@ variable "logging" {
 variable "notification_configuration" {
   description = "Notification configuration for the bucket"
   type = object({
-    cloudwatch_configuration = optional(list(object({
-      id            = optional(string)
-      filter_prefix = optional(string)
-      filter_suffix = optional(string)
-    })))
     lambda_configuration = optional(list(object({
       id                  = optional(string)
       lambda_function_arn = string

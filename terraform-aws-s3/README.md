@@ -12,7 +12,7 @@ This module creates and manages an AWS Simple Storage Service (S3) bucket with c
 - ✅ CORS configuration for cross-origin requests
 - ✅ Static website hosting
 - ✅ Access logging
-- ✅ Event notifications (CloudWatch, Lambda, SQS)
+- ✅ Event notifications (Lambda, SQS)
 - ✅ Cross-region replication
 - ✅ Object lock for compliance
 - ✅ Intelligent tiering for cost optimization

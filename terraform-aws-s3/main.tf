@@ -173,15 +173,6 @@ resource "aws_s3_bucket_notification" "this" {
   count  = var.notification_configuration != null ? 1 : 0
   bucket = aws_s3_bucket.this.id
 
-  dynamic "cloudwatch_configuration" {
-    for_each = var.notification_configuration.cloudwatch_configuration != null ? var.notification_configuration.cloudwatch_configuration : []
-    content {
-      id            = cloudwatch_configuration.value.id
-      filter_prefix = cloudwatch_configuration.value.filter_prefix
-      filter_suffix = cloudwatch_configuration.value.filter_suffix
-    }
-  }
-
   dynamic "lambda_function" {
     for_each = var.notification_configuration.lambda_configuration != null ? var.notification_configuration.lambda_configuration : []
     content {
@@ -222,14 +213,26 @@ resource "aws_s3_bucket_replication_configuration" "this" {
         for_each = rule.value.filter != null ? [rule.value.filter] : []
         content {
           prefix = filter.value.prefix
-          tags   = filter.value.tags
+          dynamic "tag" {
+            for_each = filter.value.tags != null ? filter.value.tags : {}
+            content {
+              key   = tag.key
+              value = tag.value
+            }
+          }
         }
       }
 
       destination {
-        bucket             = rule.value.destination.bucket
-        storage_class      = rule.value.destination.storage_class
-        replica_kms_key_id = rule.value.destination.replica_kms_key_id
+        bucket        = rule.value.destination.bucket
+        storage_class = rule.value.destination.storage_class
+
+        dynamic "encryption_configuration" {
+          for_each = rule.value.destination.replica_kms_key_id != null ? [rule.value.destination.replica_kms_key_id] : []
+          content {
+            replica_kms_key_id = encryption_configuration.value
+          }
+        }
 
         dynamic "access_control_translation" {
           for_each = rule.value.destination.access_control_translation != null ? [rule.value.destination.access_control_translation] : []
@@ -237,8 +240,6 @@ resource "aws_s3_bucket_replication_configuration" "this" {
             owner = access_control_translation.value.owner
           }
         }
-
-        account_id = rule.value.destination.account_id
 
         dynamic "metrics" {
           for_each = rule.value.destination.metrics != null ? [rule.value.destination.metrics] : []
